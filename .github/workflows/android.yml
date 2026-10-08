@@ -1,0 +1,93 @@
+# e-Wari · compilation Android.
+# - Toujours : APK de test (debug) installable directement sur un téléphone Android.
+# - Si les secrets de signature sont renseignés : AAB signé pour Google Play + APK signé.
+name: Android
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_origin:
+        description: "Adresse publique de l'API"
+        default: "https://api-pilote.up.railway.app"
+        required: true
+      version_name:
+        description: "Version affichée (ex. 1.0.0)"
+        default: "1.0.0"
+        required: true
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      EWARI_API_ORIGIN: ${{ inputs.api_origin || 'https://api-pilote.up.railway.app' }}
+      EWARI_VERSION_NAME: ${{ inputs.version_name || github.ref_name }}
+      EWARI_VERSION_CODE: ${{ github.run_number }}
+      HAS_SIGNING: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Numéro de version (sans le « v » du tag)
+        run: echo "EWARI_VERSION_NAME=${EWARI_VERSION_NAME#v}" >> "$GITHUB_ENV"
+
+      - name: Dépendances
+        run: npm ci
+
+      - name: Application embarquée (www) + synchronisation Android
+        run: |
+          node scripts/build-www.mjs
+          npx cap sync android
+
+      - name: APK de test (debug)
+        working-directory: android
+        run: chmod +x gradlew && ./gradlew --no-daemon assembleDebug
+
+      - name: Clé de signature (depuis les secrets)
+        if: env.HAS_SIGNING == 'true'
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/ewari-upload.jks"
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/ewari-upload.jks" >> "$GITHUB_ENV"
+
+      - name: AAB et APK signés (Google Play)
+        if: env.HAS_SIGNING == 'true'
+        working-directory: android
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew --no-daemon bundleRelease assembleRelease
+
+      - name: Effacer la clé du serveur de compilation
+        if: always()
+        run: rm -f "$RUNNER_TEMP/ewari-upload.jks"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e-wari-android-test-${{ github.run_number }}
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
+
+      - uses: actions/upload-artifact@v4
+        if: env.HAS_SIGNING == 'true'
+        with:
+          name: e-wari-android-store-${{ github.run_number }}
+          path: |
+            android/app/build/outputs/bundle/release/app-release.aab
+            android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 30

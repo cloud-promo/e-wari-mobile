@@ -1,0 +1,124 @@
+# e-Wari · compilation iOS (sur un Mac fourni par GitHub : aucun Mac nécessaire chez vous).
+# - Sans secrets Apple : compilation de contrôle pour le simulateur (vérifie que le projet compile).
+# - Avec les secrets Apple : archive signée (.ipa) et, si demandé, envoi sur TestFlight / App Store Connect.
+#   La signature est automatique : certificats et profils sont gérés par Apple via la clé API App Store Connect.
+name: iOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_origin:
+        description: "Adresse publique de l'API"
+        default: "https://api-pilote.up.railway.app"
+        required: true
+      version_name:
+        description: "Version affichée (ex. 1.0.0)"
+        default: "1.0.0"
+        required: true
+      testflight:
+        description: "Envoyer sur TestFlight après compilation"
+        type: boolean
+        default: true
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    env:
+      EWARI_API_ORIGIN: ${{ inputs.api_origin || 'https://api-pilote.up.railway.app' }}
+      VERSION_NAME: ${{ inputs.version_name || github.ref_name }}
+      BUILD_NUMBER: ${{ github.run_number }}
+      HAS_APPLE: ${{ secrets.APPSTORE_API_KEY_P8_BASE64 != '' && secrets.APPLE_TEAM_ID != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Numéro de version (sans le « v » du tag)
+        run: echo "VERSION_NAME=${VERSION_NAME#v}" >> "$GITHUB_ENV"
+
+      - name: Dépendances
+        run: npm ci
+
+      - name: Application embarquée (www) + synchronisation iOS
+        run: |
+          node scripts/build-www.mjs
+          npx cap sync ios
+
+      - name: Compilation de contrôle (simulateur, sans signature)
+        if: env.HAS_APPLE != 'true'
+        run: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build | tail -n 40
+
+      - name: Clé API App Store Connect (depuis les secrets)
+        if: env.HAS_APPLE == 'true'
+        run: |
+          mkdir -p ~/private_keys
+          echo "${{ secrets.APPSTORE_API_KEY_P8_BASE64 }}" | base64 -d > ~/private_keys/AuthKey_${{ secrets.APPSTORE_API_KEY_ID }}.p8
+          echo "ASC_KEY_PATH=$HOME/private_keys/AuthKey_${{ secrets.APPSTORE_API_KEY_ID }}.p8" >> "$GITHUB_ENV"
+
+      - name: Archive signée
+        if: env.HAS_APPLE == 'true'
+        run: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/App.xcarchive" archive \
+            DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}" CODE_SIGN_STYLE=Automatic \
+            PRODUCT_BUNDLE_IDENTIFIER=com.ewari.app \
+            MARKETING_VERSION="$VERSION_NAME" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "${{ secrets.APPSTORE_API_KEY_ID }}" \
+            -authenticationKeyIssuerID "${{ secrets.APPSTORE_API_ISSUER_ID }}" | tail -n 60
+
+      - name: Export .ipa (App Store Connect)
+        if: env.HAS_APPLE == 'true'
+        run: |
+          cat > "$RUNNER_TEMP/export.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>export</string>
+            <key>teamID</key><string>${{ secrets.APPLE_TEAM_ID }}</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/export.plist" -exportPath "$RUNNER_TEMP/ipa" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "${{ secrets.APPSTORE_API_KEY_ID }}" \
+            -authenticationKeyIssuerID "${{ secrets.APPSTORE_API_ISSUER_ID }}"
+          ls -la "$RUNNER_TEMP/ipa"
+
+      - name: Envoi sur TestFlight
+        if: env.HAS_APPLE == 'true' && (inputs.testflight || startsWith(github.ref, 'refs/tags/v'))
+        run: |
+          xcrun altool --upload-app --type ios -f "$RUNNER_TEMP"/ipa/*.ipa \
+            --apiKey "${{ secrets.APPSTORE_API_KEY_ID }}" --apiIssuer "${{ secrets.APPSTORE_API_ISSUER_ID }}"
+
+      - name: Effacer la clé du serveur de compilation
+        if: always()
+        run: rm -rf ~/private_keys
+
+      - uses: actions/upload-artifact@v4
+        if: env.HAS_APPLE == 'true'
+        with:
+          name: e-wari-ios-${{ github.run_number }}
+          path: ${{ runner.temp }}/ipa/*.ipa
+          retention-days: 30
