@@ -8,8 +8,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // Numéro de version : fourni par la compilation GitHub (numéro d'exécution), sinon 1.
-        versionCode (System.getenv("EWARI_VERSION_CODE") ?: "1").toInteger()
-        versionName System.getenv("EWARI_VERSION_NAME") ?: "1.0.0"
+        versionCode = (System.getenv("EWARI_VERSION_CODE") ?: "1").toInteger()
+        versionName = System.getenv("EWARI_VERSION_NAME") ?: "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
