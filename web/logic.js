@@ -768,13 +768,24 @@ class Component extends DCLogic {
     var kd = KDOCS.filter(function (d) { return d.id === s.kycDoc; })[0] || KDOCS[1];
     var frame = function (state) { return state === 'ok' ? '#3FD39B' : state === 'bad' ? '#F07A6A' : '#FFFFFF'; };
     var kycStart = function () { set({ screen: 'kycType', kycPhoto: '', kycSelfie: '', kycDocImg: '', kycSelfImg: '' }); };
+    /* Âge minimum de 18 ans pour un compte vérifié : un mineur garde son compte non vérifié (plafonds) */
+    var KYC_MIN_AGE = 18;
+    var kycAge = (function (t) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(t || '')) return null;
+      var p = t.split('-'), n = new Date(), a = n.getFullYear() - Number(p[0]);
+      if (n.getMonth() + 1 < Number(p[1]) || (n.getMonth() + 1 === Number(p[1]) && n.getDate() < Number(p[2]))) a--;
+      return a >= 0 && Number(p[0]) >= 1900 ? a : null;
+    })(s.kycBirth);
+    var kycMinor = kycAge !== null && kycAge < KYC_MIN_AGE;
+    var kycBirthOk = kycAge !== null && !kycMinor;
+    var todayIso = (function () { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); })();
     var capPctN = Math.min(100, Math.round(bal[CUR] / CAP * 100));
     var capPctC = Math.min(100, Math.round(cryptoTotalN / CAP_C * 100));
     var pickFile = function (id) { return function () { var el = document.getElementById(id); if (el) { el.value = ''; el.click(); } }; };
     var sendKyc = function () {
       if (s.busy || !s.kycDocImg || !s.kycSelfImg) return;
       set({ busy: true });
-      call('/kyc', { docType: kd.code, docImage: s.kycDocImg, selfieImage: s.kycSelfImg }, s.token).then(function () {
+      call('/kyc', { docType: kd.code, docImage: s.kycDocImg, selfieImage: s.kycSelfImg, birthDate: s.kycBirth || '' }, s.token).then(function () {
         self.setState({ busy: false, screen: 'done', kycDocImg: '', kycSelfImg: '', last: { title: 'Dossier envoyé', text: 'Un agent compare votre pièce et votre photo : réponse sous 24 h. Les plafonds restent actifs en attendant.' } });
         self.refresh();
       }, function (e) { self.setState({ busy: false, screen: 'done', last: { title: 'Envoi impossible', text: e.message, fail: true } }); });
@@ -1127,7 +1138,13 @@ class Component extends DCLogic {
           style: 'display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 16px; border: 0; border-bottom: 1px solid #ECE8DE; text-align: left; color: #15171C; background: ' + (on ? '#EEF6F2' : '#FFFFFF') };
       }),
       kycDocName: kd.name,
-      kycToPhoto: function () { set({ screen: 'kycPhoto' }); },
+      kycToPhoto: function () { if (kycBirthOk) set({ screen: 'kycPhoto' }); },
+      kycBirth: s.kycBirth || '', kycBirthMax: todayIso,
+      onKycBirth: function (e) { set({ kycBirth: e.target.value }); },
+      kycMinor: kycMinor,
+      kycMinorText: 'La vérification d’identité est réservée aux personnes de ' + KYC_MIN_AGE + ' ans et plus. Votre compte reste utilisable avec les plafonds d’un compte non vérifié (solde jusqu’à ' + fx(CAP) + ').',
+      kycTypeBlocked: !kycBirthOk,
+      kycContStyle: kycBirthOk ? '' : 'opacity: .45',
       kycBackType: go('kycType'),
       kycBackPhoto: go('kycPhoto'),
       docFrameStyle: 'position: relative; z-index: 1; width: 250px; height: 158px; box-sizing: border-box; border: 3px ' + (s.kycDocImg ? 'solid ' : 'dashed ') + frame(s.kycDocImg ? 'ok' : '') + '; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; overflow: hidden; background: center / cover no-repeat ' + (s.kycDocImg ? 'url(' + s.kycDocImg + ')' : 'transparent'),
