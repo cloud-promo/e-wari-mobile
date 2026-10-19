@@ -223,14 +223,15 @@ class Component extends DCLogic {
       { code: 'CM', city: 'Douala', len: [9], name: 'Cameroun', dial: '+237', ph: '6 71 23 45 67', zone: 'CEMAC', ops: ['MTN MoMo', 'Orange Money'] },
       { code: 'GA', city: 'Libreville', len: [8, 9], name: 'Gabon', dial: '+241', ph: '07 12 34 56', zone: 'CEMAC', ops: ['Airtel Money', 'Moov Money'] },
       { code: 'CG', city: 'Brazzaville', len: [9], name: 'Congo', dial: '+242', ph: '06 123 45 67', zone: 'CEMAC', ops: ['MTN MoMo', 'Airtel Money'] },
+      { code: 'GN', city: 'Conakry', len: [9], name: 'Guinée', dial: '+224', ph: '621 12 34 56', zone: 'GN', ops: ['Orange Money', 'MTN MoMo'] },
       { code: 'TD', city: 'N’Djamena', len: [8], name: 'Tchad', dial: '+235', ph: '66 12 34 56', zone: 'CEMAC', ops: ['Airtel Money', 'Moov Money'] },
       { code: 'CF', city: 'Bangui', len: [8], name: 'Centrafrique', dial: '+236', ph: '75 12 34 56', zone: 'CEMAC', ops: ['Orange Money'] }
     ];
     var byCode = function (code) { return COUNTRIES.filter(function (c) { return c.code === code; })[0]; };
     var ctry = byCode(s.country) || COUNTRIES[0];
-    var CUR = ctry.zone === 'CEMAC' ? 'XAF' : 'XOF';
+    var CUR = ctry.zone === 'CEMAC' ? 'XAF' : ctry.zone === 'GN' ? 'GNF' : 'XOF';
     var cryptoOn = ctry.zone === 'UEMOA';
-    var bal = { XOF: 0, XAF: 0, BTC: 0, ETH: 0, USDT: 0 };
+    var bal = { XOF: 0, XAF: 0, GNF: 0, BTC: 0, ETH: 0, USDT: 0 };
     Object.keys(srv.balances || {}).forEach(function (k) { bal[k] = CRYPTOS.indexOf(k) >= 0 ? srv.balances[k] / 1e8 : Number(srv.balances[k]); });
     var phoneOk = function (d, c) { return (c || ctry).len.indexOf(d.length) >= 0; };
     var lenText = function (c) { return c.len.join(' ou ') + ' chiffres'; };
@@ -261,7 +262,7 @@ class Component extends DCLogic {
     var go = function (screen, extra) { return function () { set(Object.assign({ screen: screen }, extra || {})); }; };
     var srvErr = function (k) { return s.srvFor === k ? (s.srvErr || '') : ''; };
 
-    var fx = function (n) { return Math.round(n).toLocaleString('fr-FR').replace(/[  \s]/g, ' ') + ' F'; };
+    var fx = function (n) { return Math.round(n).toLocaleString('fr-FR').replace(/[  \s]/g, ' ') + (CUR === 'GNF' ? ' GNF' : ' F'); };
     var fc = function (n, a) {
       var t = Number(n).toFixed(D[a]);
       if (t.indexOf('.') >= 0) t = t.replace(/0+$/, '').replace(/\.$/, '');
@@ -515,7 +516,7 @@ class Component extends DCLogic {
     else if (!mFixed && qrAmt > 0 && qrAmt < 100) qrErr = 'Montant minimum : 100 F';
     qrErr = qrErr || srvErr('qr');
     var qrOk = qrAmt >= 100 && !qrErr;
-    var TYPE_LBL = { hotel: 'Hôtel', commerce: 'Commerce', resto: 'Restaurant', livraison: 'Livraison', ecole: 'École', eau: 'Eau', electricite: 'Électricité' };
+    var TYPE_LBL = { immo: 'Immobilier', hotel: 'Hôtel', commerce: 'Commerce', resto: 'Restaurant', livraison: 'Livraison', ecole: 'École', eau: 'Eau', electricite: 'Électricité' };
     var merchants = shops.map(function (m) {
       return { name: m.name, sub: (TYPE_LBL[m.type] || 'Partenaire') + ' · ' + (m.city || ctry.name), amountText: 'Montant libre',
         pick: function () { set({ screen: 'qrpay', merchant: m.code, qrTo: '', qrAmount: '', qrFixed: 0 }); } };
@@ -553,10 +554,10 @@ class Component extends DCLogic {
         partnerLabel: 'Choisissez le commerce', list: true,
         ref: { label: 'N° de ticket de caisse (facultatif)', ph: 'T-0412', len: [1, 12], alnum: true, required: false, hint: 'Imprimé sur votre ticket' },
         quick: [5000, 10000, 25000], foundTitle: 'Commerce partenaire' },
-      { id: 'livreur', type: 'livraison', name: 'Livreur', sub: 'Livraison', color: '#3E424A', bg: '#ECE8DE', icon: 'M3 7l9-4 9 4v10l-9 4-9-4V7zM3 7l9 4 9-4M12 11v10',
-        partnerLabel: 'Choisissez le service de livraison', list: true, indep: true,
-        ref: { label: 'N° de commande', ph: 'CMD-5821', len: [4, 12], alnum: true, required: true, hint: 'Indiqué dans le SMS ou l’appli du livreur' },
-        quick: [1000, 1500, 2000], foundTitle: 'Livraison' },
+      { id: 'loyer', type: 'immo', name: 'Loyer', sub: 'Agence, bailleur', color: '#7A4B12', bg: '#F5E9D8', icon: 'M3 11l9-7 9 7M5 10v10h14V10M10 20v-6h4v6',
+        partnerLabel: 'Choisissez votre agence ou votre bailleur', list: true,
+        ref: { label: 'Identifiant locataire', ph: 'LOC-SN1001', len: [4, 14], alnum: true, required: true, hint: 'Remis par votre agence ou votre bailleur (figure sur votre bail)' },
+        fixed: true, fixedLabel: 'Loyer du mois', foundTitle: 'Logement trouvé', lookup: true, rent: true },
       { id: 'hotel', type: 'hotel', name: 'Hôtel', sub: 'Séjour', color: '#1F5E73', bg: '#DDEFF3', icon: 'M2 19V6M2 15h20v4M22 15v-2a3 3 0 0 0-3-3h-8v5M6.5 12.5a1.5 1.5 0 1 0 0-.01',
         partnerLabel: 'Choisissez l’hôtel', list: true,
         ref: { label: 'N° de réservation', ph: 'RES-1024', len: [3, 14], alnum: true, required: true, hint: 'Indiqué sur votre confirmation de réservation ou à la réception' },
@@ -589,13 +590,34 @@ class Component extends DCLogic {
     if (lookKey && lk.key !== lookKey && self._lookKey !== lookKey) {
       self._lookKey = lookKey;
       fetch(API + '/partners/' + encodeURIComponent(bp.id) + '/items/' + encodeURIComponent(refClean)).then(function (r) { return r.json(); }).then(function (j) {
-        self.setState({ billLook: { key: lookKey, ok: !j.error, label: j.label || '', amount: j.amount || 0, paid: !!j.paid, err: j.error || '' } });
+        self.setState({ billLook: { key: lookKey, ok: !j.error, label: j.label || '', amount: j.amount || 0, paid: !!j.paid, period: j.periodLabel || '', err: j.error || '' } });
       }, function () { self.setState({ billLook: { key: lookKey, ok: false, err: 'Recherche impossible, réessayez.' } }); });
     }
     var looked = lk.key === lookKey && !!lookKey;
     if (!billErr && bc.lookup && looked && !lk.ok && !bc.lookSoft) billErr = lk.err;
-    else if (!billErr && bc.lookup && looked && lk.paid) billErr = 'Cette référence est déjà payée.';
+    else if (!billErr && bc.lookup && looked && lk.paid) billErr = bc.rent ? 'Le loyer de ' + (lk.period || 'ce mois') + ' est déjà payé pour ce logement.' : 'Cette référence est déjà payée.';
     var billFound = partnerOk && refOk && (!bc.lookup || (looked && (lk.ok || bc.lookSoft) && !lk.paid));
+    /* ---- Loyer : mandat de prélèvement automatique le 25 (service gov) ---- */
+    var RT = s.rent || null;
+    var rentKeyOk = !!(bc.rent && bp && refValid && looked && lk.ok);
+    if (bc.rent && s.token && !RT && !self._rentLoading) {
+      self._rentLoading = true;
+      call('/gov/loyer', null, s.token).then(function (d) { self._rentLoading = false; self.setState({ rent: d }); }, function () { self._rentLoading = false; self.setState({ rent: { mandates: [], consent: '' } }); });
+    }
+    var rentM = rentKeyOk && RT ? (RT.mandates || []).filter(function (m) { return m.status === 'active' && m.partnerCode === bp.id && String(m.ref).toUpperCase() === refClean; })[0] || null : null;
+    var rentPinOk = /^\d{4}$/.test(s.rentPin || '');
+    var rentReload = function (msg) { call('/gov/loyer', null, s.token).then(function (d) { self.setState({ rent: d, rentMsg: msg || '', busy: false, rentPin: '', rentAccept: false }); }, function () { self.setState({ busy: false }); }); };
+    var rentActivate = function () {
+      if (s.busy || !rentKeyOk || !s.rentAccept || !rentPinOk) return;
+      set({ busy: true, rentMsg: '' });
+      call('/gov/loyer/mandat', { partner: bp.id, ref: refClean, pin: s.rentPin, accept: true }, s.token).then(function (r) { rentReload(r.message); }, function (e) { self.setState({ busy: false, rentPin: '', rentMsg: e.message }); });
+    };
+    var rentStop = function () {
+      if (!rentPinOk) { set({ rentMsg: 'Saisissez votre code PIN pour arrêter le prélèvement.' }); return; }
+      if (s.busy || !rentM) return;
+      set({ busy: true, rentMsg: '' });
+      call('/gov/loyer/mandat/' + encodeURIComponent(rentM.id) + '/stop', { pin: s.rentPin }, s.token).then(function () { rentReload('Prélèvement automatique arrêté.'); }, function (e) { self.setState({ busy: false, rentPin: '', rentMsg: e.message }); });
+    };
     var benef = bp ? bp.name : bc.benef;
     var foundText = '';
     if (bc.lookup && looked && lk.ok) foundText = lk.label + ' · ' + bp.name;
@@ -1089,7 +1111,7 @@ class Component extends DCLogic {
       logout: logout,
       ddCountry: dd('country', COUNTRIES.map(function (c) {
         return { code: c.code, name: c.name, on: c.code === ctry.code,
-          sub: (c.zone === 'CEMAC' ? 'XAF · zone CEMAC · transferts' : 'XOF · zone UEMOA · crypto') + ' · ' + c.dial,
+          sub: (c.zone === 'CEMAC' ? 'XAF · zone CEMAC · transferts' : c.zone === 'GN' ? 'GNF · Guinée · paiements locaux' : 'XOF · zone UEMOA · crypto') + ' · ' + c.dial,
           style: 'display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-bottom: 1px solid #ECE8DE; text-align: left; color: #15171C; background: ' + (c.code === ctry.code ? '#EEF6F2' : '#FFFFFF'),
           pick: function () { set({ country: c.code, screen: (s.token && srv.country === c.code) ? 'home' : 'phone', regPhone: '', otp: '', otpErr: '', method: c.ops[0], payout: 'wallet', xAsset: c.zone === 'CEMAC' ? 'XAF' : 'XOF', amount: '', dAmount: '', xAmount: '' }); } };
       }), function (r) { return r.name + ' (' + r.code + ')'; }, function (r) { return r.sub; }, 'Autres pays'),
@@ -1171,6 +1193,7 @@ class Component extends DCLogic {
       onSelfieFile: function (e) { var f = e.target.files && e.target.files[0]; if (f) shrink(f, function (d) { self.setState({ kycSelfImg: d, kycCamErr: '' }); }); },
       finishKyc: sendKyc, kycSendBtn: cta(!!s.kycSelfImg), kycSendBlocked: !s.kycSelfImg || !!s.busy,
       goInvest: function () { set({ screen: 'invest' }); self.refresh(); }, isInvest: scr === 'invest',
+      invPortalOpen: function () { window.open((NATIVE ? NATIVE.origin : location.origin) + '/investir', '_blank', 'noopener'); },
       invTitle: R.title || 'Levée de fonds', invClose: closeTxt, invStatusText: roundOpen ? 'Levée ouverte' : 'Levée pas encore ouverte',
       invMin: plural(INV.min, 'part'), invMax: plural(INV.max, 'part'),
       invRaised: fx(raisedN), invGoal: fx(INV.goal), invPct: String(invPctN).replace('.', ',') + ' %', invPctNum: invPctN,
@@ -1222,6 +1245,14 @@ class Component extends DCLogic {
       billRefLabel: refCfg.label, billRefPh: refCfg.ph,
       billRef: s.billRef, onBillRef: function (e) { set({ billRef: e.target.value }); },
       billRefHint: refCfg.hint,
+      rentShow: rentKeyOk, rentCanOn: rentKeyOk && !rentM, rentCanOff: !!rentM,
+      rentText: rentM ? 'Actif depuis le ' + new Date(rentM.consentAt).toLocaleDateString('fr-FR') + ' : votre loyer est prélevé automatiquement à partir du 25 de chaque mois (nouvel essai chaque jour jusqu’au 5 si le solde est insuffisant).' : 'Ne vous souciez plus de la date : e-Wari prélève votre loyer à partir du 25 de chaque mois et le verse directement à votre agence ou à votre bailleur.',
+      rentConsent: (RT && RT.consent) || 'J’autorise e-Wari à prélever mon loyer à partir du 25 de chaque mois, conformément à la clause de prélèvement de mon contrat de bail.',
+      rentAccept: !!s.rentAccept, rentToggle: function (e) { set({ rentAccept: !!e.target.checked }); },
+      rentPin: s.rentPin || '', onRentPin: function (e) { set({ rentPin: String(e.target.value || '').replace(/\D/g, '').slice(0, 4) }); },
+      rentActivate: rentActivate, rentStop: rentStop, rentBlocked: !(s.rentAccept && rentPinOk) || !!s.busy,
+      rentBtn: 'min-height:48px;border:0;border-radius:12px;font-size:15px;font-weight:700;color:#FFFFFF;background:' + (s.rentAccept && rentPinOk && !s.busy ? '#0F6B4F' : '#9CA3AF'),
+      rentHasMsg: !!s.rentMsg, rentMsg: s.rentMsg || '',
       billFound: billFound, billFoundTitle: bc.lookSoft && !(looked && lk.ok) ? 'Hôtel partenaire' : bc.foundTitle, billFoundText: foundText,
       billFixedShow: billFixed && billFound && fixedAmt > 0, billFreeShow: partnerOk && !(billFixed && fixedAmt > 0) && (!bc.lookup || billFound),
       billFixedLabel: bc.fixedLabel || '', billFixedText: fixedAmt ? fx(fixedAmt) : '',
@@ -1415,14 +1446,15 @@ class Component extends DCLogic {
       navGrid: 'flex-shrink: 0; display: grid; grid-template-columns: repeat(' + (cryptoOn ? 5 : 4) + ', minmax(0, 1fr)); min-height: 72px; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid #E0DCD1; background: #FFFFFF',
       zones: [
         { title: 'Zone UEMOA · XOF · crypto disponible', z: 'UEMOA' },
-        { title: 'Zone CEMAC · XAF · transferts uniquement', z: 'CEMAC' }
+        { title: 'Zone CEMAC · XAF · transferts uniquement', z: 'CEMAC' },
+        { title: 'Guinée · GNF · paiements locaux (sans envoi vers les zones UEMOA et CEMAC)', z: 'GN' }
       ].map(function (zn) {
         return {
           title: zn.title,
           items: COUNTRIES.filter(function (c) { return c.zone === zn.z; }).map(function (c) {
             return {
               code: c.code, name: c.name, on: c.code === ctry.code,
-              sub: (c.zone === 'CEMAC' ? 'XAF' : 'XOF') + ' · ' + c.dial + ' · ' + c.ops.join(', '),
+              sub: (c.zone === 'CEMAC' ? 'XAF' : c.zone === 'GN' ? 'GNF' : 'XOF') + ' · ' + c.dial + ' · ' + c.ops.join(', '),
               style: 'display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-bottom: 1px solid #ECE8DE; text-align: left; color: #15171C; background: ' + (c.code === ctry.code ? '#EEF6F2' : '#FFFFFF'),
               pick: function () { set({ country: c.code, screen: (s.token && srv.country === c.code) ? 'home' : 'phone', regPhone: '', otp: '', otpErr: '' }); }
             };
