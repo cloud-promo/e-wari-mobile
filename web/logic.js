@@ -274,7 +274,7 @@ class Component extends DCLogic {
     };
     var chip = function (on) {
       return 'flex-grow: 1; min-height: 44px; border-radius: 12px; font-weight: 600; font-size: 14px; ' +
-        (on ? 'background: #15171C; color: #FFFFFF; border: 1px solid #15171C;' : 'background: #FFFFFF; color: #15171C; border: 1px solid #D6D2C7;');
+        (on ? 'background: #15171C; color: #FFFFFF; border: 1px solid #15171C;' : 'background: #FFFFFF; color: #15171C; border: 1px solid #CFE2D0;');
     };
     var tab = function (on) {
       return 'min-height: 44px; border: 0; border-radius: 11px; font-weight: 600; font-size: 15px; ' +
@@ -282,11 +282,11 @@ class Component extends DCLogic {
     };
     var cta = function (ok) {
       return 'width: 100%; height: 54px; border: 0; border-radius: 16px; font-weight: 600; font-size: 16px; ' +
-        (ok && !s.busy ? 'background: #0F6B4F; color: #FFFFFF;' : 'background: #D9D5CB; color: #5A5E66;');
+        (ok && !s.busy ? 'background: #13894A; color: #FFFFFF;' : 'background: #D9D5CB; color: #5A5E66;');
     };
     var nav = function (on) {
       return 'display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 0; background: transparent; font-size: 12px; font-weight: 600; ' +
-        (on ? 'color: #0F6B4F;' : 'color: #5A5E66;');
+        (on ? 'color: #13894A;' : 'color: #5A5E66;');
     };
     var dd = function (id, items, label, sub, noun) {
       var top = items.slice(0, 3), rest = items.slice(3), open = s.ddOpen === id;
@@ -296,12 +296,12 @@ class Component extends DCLogic {
         toggle: function () { set({ ddOpen: open ? '' : id }); },
         ddLabel: selRest ? label(selRest) + ' · sélectionné' : noun + ' (' + rest.length + ')',
         chev: open ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6',
-        ddStyle: 'display: flex; align-items: center; gap: 8px; width: 100%; min-height: 46px; padding: 0 14px; border-radius: 12px; font-weight: 600; font-size: 14px; ' + (selRest ? 'background: #EEF6F2; border: 1px solid #0F6B4F; color: #0A4F3A;' : 'background: #FFFFFF; border: 1px solid #D6D2C7; color: #15171C;'),
+        ddStyle: 'display: flex; align-items: center; gap: 8px; width: 100%; min-height: 46px; padding: 0 14px; border-radius: 12px; font-weight: 600; font-size: 14px; ' + (selRest ? 'background: #E6F7EA; border: 1px solid #13894A; color: #0B5C31;' : 'background: #FFFFFF; border: 1px solid #CFE2D0; color: #15171C;'),
         rest: rest.map(function (r) {
           var sb = sub ? sub(r) : '';
           return { label: label(r), sub: sb, hasSub: !!sb, on: !!r.on,
             pick: function () { r.pick(); set({ ddOpen: '' }); },
-            style: 'display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 10px 14px; border: 0; border-bottom: 1px solid #ECE8DE; text-align: left; color: #15171C; background: ' + (r.on ? '#EEF6F2' : '#FFFFFF') };
+            style: 'display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 10px 14px; border: 0; border-bottom: 1px solid #E7F1E6; text-align: left; color: #15171C; background: ' + (r.on ? '#E6F7EA' : '#FFFFFF') };
         })
       };
     };
@@ -491,7 +491,7 @@ class Component extends DCLogic {
         on: on, code: c.code, name: c.name, short: c.name.replace('Côte d’Ivoire', 'Côte d’Iv.').replace('Burkina Faso', 'Burkina').replace('Guinée-Bissau', 'G.-Bissau').replace('Centrafrique', 'Centrafr.'),
         pick: function () { set({ xCountry: c.code, recipient: String(s.recipient || '').trim().charAt(0) === '+' ? '' : s.recipient }); },
         style: 'display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; padding: 4px 2px; border-radius: 12px; ' +
-          (on ? 'background: #15171C; color: #FFFFFF; border: 1px solid #15171C;' : 'background: #FFFFFF; color: #15171C; border: 1px solid #D6D2C7;')
+          (on ? 'background: #15171C; color: #FFFFFF; border: 1px solid #15171C;' : 'background: #FFFFFF; color: #15171C; border: 1px solid #CFE2D0;')
       };
     });
     var xOps = rc.ops.map(function (o) { return { label: o, on: o === xOp, pick: function () { set({ xOp: o }); }, style: chip(o === xOp) }; });
@@ -550,7 +550,7 @@ class Component extends DCLogic {
         partnerLabel: 'Choisissez le restaurant', list: true,
         ref: { label: 'N° de table ou de ticket (facultatif)', ph: '12', len: [1, 10], alnum: true, required: false, hint: 'Aide le restaurant à retrouver votre commande' },
         quick: [2500, 5000, 10000], foundTitle: 'Restaurant partenaire' },
-      { id: 'courses', type: 'commerce', name: 'Courses', sub: 'Alimentation', color: '#0F6B4F', bg: '#DCEFE6', icon: 'M3 9h18l-2 11H5L3 9zM8 9l4-6 4 6',
+      { id: 'courses', type: 'commerce', name: 'Courses', sub: 'Alimentation', color: '#13894A', bg: '#D3F2DC', icon: 'M3 9h18l-2 11H5L3 9zM8 9l4-6 4 6',
         partnerLabel: 'Choisissez le commerce', list: true,
         ref: { label: 'N° de ticket de caisse (facultatif)', ph: 'T-0412', len: [1, 12], alnum: true, required: false, hint: 'Imprimé sur votre ticket' },
         quick: [5000, 10000, 25000], foundTitle: 'Commerce partenaire' },
@@ -641,8 +641,8 @@ class Component extends DCLogic {
       return {
         on: !!on, name: x.name, sub: x.sub, initials: initialsOf(x.name),
         badge: 'width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: ' + bc.color + '; background: ' + bc.bg,
-        radio: 'width: 20px; height: 20px; flex-shrink: 0; border-radius: 10px; box-sizing: border-box; ' + (on ? 'border: 6px solid #0F6B4F; background: #FFFFFF;' : 'border: 2px solid #8A8E96;'),
-        style: 'display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-bottom: 1px solid #ECE8DE; text-align: left; color: #15171C; background: ' + (on ? '#EEF6F2' : '#FFFFFF'),
+        radio: 'width: 20px; height: 20px; flex-shrink: 0; border-radius: 10px; box-sizing: border-box; ' + (on ? 'border: 6px solid #13894A; background: #FFFFFF;' : 'border: 2px solid #8A8E96;'),
+        style: 'display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-bottom: 1px solid #E7F1E6; text-align: left; color: #15171C; background: ' + (on ? '#E6F7EA' : '#FFFFFF'),
         pick: function () { set({ billPartner: x.id, billRef: (bp && !!bp.indep) !== !!x.indep ? '' : s.billRef }); }
       };
     });
@@ -676,7 +676,7 @@ class Component extends DCLogic {
     var addDay = function (d, n) { var x = new Date(d + 'T00:00:00Z'); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
     var todayIso = new Date().toISOString().slice(0, 10);
     var insPill = function (st) {
-      var c = st === 'valid' ? ['#DCEFE6', '#0A4F3A'] : st === 'upcoming' ? ['#FBEBD3', '#7A4A00'] : ['#F6DEDA', '#A12A1E'];
+      var c = st === 'valid' ? ['#D3F2DC', '#0B5C31'] : st === 'upcoming' ? ['#FBEBD3', '#7A4A00'] : ['#F6DEDA', '#A12A1E'];
       return 'align-self: flex-start; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: ' + c[0] + '; color: ' + c[1];
     };
     var insRows = insPols.map(function (p) {
@@ -698,8 +698,8 @@ class Component extends DCLogic {
     var insProdRows = (INS.products || []).filter(function (p) { return p.cat === insCat; }).map(function (p) {
       var on = insProd && insProd.id === p.id;
       return { on: on, label: p.label, price: fx(Math.round(p.annual * insCoef / 100) * 100) + ' / ' + insMonths + ' mois',
-        style: 'display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 12px 14px; border: 0; border-bottom: 1px solid #ECE8DE; text-align: left; color: #15171C; background: ' + (on ? '#EEF6F2' : '#FFFFFF'),
-        radio: 'width: 20px; height: 20px; flex-shrink: 0; border-radius: 10px; box-sizing: border-box; ' + (on ? 'border: 6px solid #0F6B4F; background: #FFFFFF;' : 'border: 2px solid #8A8E96;'),
+        style: 'display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 12px 14px; border: 0; border-bottom: 1px solid #E7F1E6; text-align: left; color: #15171C; background: ' + (on ? '#E6F7EA' : '#FFFFFF'),
+        radio: 'width: 20px; height: 20px; flex-shrink: 0; border-radius: 10px; box-sizing: border-box; ' + (on ? 'border: 6px solid #13894A; background: #FFFFFF;' : 'border: 2px solid #8A8E96;'),
         pick: function () { set({ insProd: p.id }); } };
     });
     var insDurRows = (INS.durations || []).map(function (d) { return { label: d.months + ' mois', style: chip(d.months === insMonths), pick: function () { set({ insMonths: d.months }); } }; });
@@ -716,7 +716,7 @@ class Component extends DCLogic {
     var nowD = new Date(), sec = nowD.getSeconds();
     var insClock = nowD.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + nowD.toLocaleTimeString('fr-FR');
     var insValid = !!insCard && insCard.status === 'valid';
-    var insCardBg = insValid ? 'linear-gradient(160deg, #0F6B4F 0%, #0A4F3A 100%)' : insCard && insCard.status === 'upcoming' ? 'linear-gradient(160deg, #7A4A00 0%, #4F3000 100%)' : 'linear-gradient(160deg, #A12A1E 0%, #6E1A12 100%)';
+    var insCardBg = insValid ? 'linear-gradient(160deg, #13894A 0%, #0B5C31 100%)' : insCard && insCard.status === 'upcoming' ? 'linear-gradient(160deg, #7A4A00 0%, #4F3000 100%)' : 'linear-gradient(160deg, #A12A1E 0%, #6E1A12 100%)';
 
     /* Paiements à l'État : impôts, taxes, contraventions, documents */
     var ET = srv.etat || { on: false, cats: [], items: [] };
@@ -738,8 +738,8 @@ class Component extends DCLogic {
     var confirmEtat = askPay('etat', etOk, function () { return { kind: 'etat', item: etItem.id, ref: String(s.etRef || '').trim(), amount: Math.floor(etAmt) }; });
     var etQuick = (etItem && etItem.quick ? etItem.quick : []).map(function (v) { return { label: fx(v), pick: function () { set({ etAmt: String(v) }); } }; });
     var etBack = function () { if (s.etItem) set({ etItem: '' }); else if (s.etCat) set({ etCat: '' }); else set({ screen: 'pay' }); };
-    if (INS.on) billCats.push({ name: 'Assurance', sub: 'Auto et moto', icon: 'M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z', badge: badgeStyle({ color: '#0F6B4F', bg: '#DCEFE6' }, 48), pick: function () { set({ screen: 'ins', insTab: '', srvErr: '' }); } });
-    if (ET.on) billCats.push({ name: 'État', sub: 'Impôts, amendes…', icon: 'M3 21h18M4 10h16M12 3l9 5H3zM6 10v8M10 10v8M14 10v8M18 10v8', badge: badgeStyle({ color: '#15171C', bg: '#ECE8DE' }, 48), pick: function () { set({ screen: 'etat', etCat: '', etItem: '', srvErr: '' }); } });
+    if (INS.on) billCats.push({ name: 'Assurance', sub: 'Auto et moto', icon: 'M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z', badge: badgeStyle({ color: '#13894A', bg: '#D3F2DC' }, 48), pick: function () { set({ screen: 'ins', insTab: '', srvErr: '' }); } });
+    if (ET.on) billCats.push({ name: 'État', sub: 'Impôts, amendes…', icon: 'M3 21h18M4 10h16M12 3l9 5H3zM6 10v8M10 10v8M14 10v8M18 10v8', badge: badgeStyle({ color: '#15171C', bg: '#E7F1E6' }, 48), pick: function () { set({ screen: 'etat', etCat: '', etItem: '', srvErr: '' }); } });
 
     /* Investir */
     var R = srv.round || {};
@@ -828,12 +828,12 @@ class Component extends DCLogic {
     var openClaims = claimsView.filter(function (c) { return c.status === 'En cours'; }).length;
     var secuItems = [
       { title: 'Changer de code PIN', sub: 'Code actuel, puis nouveau code', icon: ICO.pin, badge: badgeIco('#E1ECF8', '#1D5FA8'), pick: function () { set({ screen: 'pinold', pinMode: 'change', pinEntry: '', pinNew: '', pinConf: '', pinErr: '', pinOld: '' }); } },
-      { title: 'Changer de biométrie', sub: bioName, icon: ICO.bio, badge: badgeIco('#DCEFE6', '#0F6B4F'), pick: function () { set({ screen: 'bioSet', bioPick: bioOn ? bioType : 'none' }); } },
+      { title: 'Changer de biométrie', sub: bioName, icon: ICO.bio, badge: badgeIco('#D3F2DC', '#13894A'), pick: function () { set({ screen: 'bioSet', bioPick: bioOn ? bioType : 'none' }); } },
       { title: 'Faire une réclamation', sub: openClaims ? openClaims + ' réclamation' + (openClaims > 1 ? 's' : '') + ' en cours' : 'Argent non reçu, montant incorrect…', icon: ICO.claim, badge: badgeIco('#FBEBD3', '#9A5B00'), pick: function () { set({ screen: 'claim', claimOp: -1, claimMotif: '', claimDesc: '' }); } },
       { title: 'Parler à un conseiller', sub: 'Chat, appel ou WhatsApp · 7 j/7', icon: ICO.chat, badge: badgeIco('#EDE4F7', '#6B3FA0'), pick: function () { set({ screen: 'chat', contactMsg: '' }); self.refresh(); } }
     ];
-    var radio = function (on) { return 'width: 20px; height: 20px; flex-shrink: 0; border-radius: 10px; box-sizing: border-box; ' + (on ? 'border: 6px solid #0F6B4F; background: #FFFFFF;' : 'border: 2px solid #8A8E96;'); };
-    var rowSel = function (on) { return 'display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 16px; border: 0; border-bottom: 1px solid #ECE8DE; text-align: left; color: #15171C; background: ' + (on ? '#EEF6F2' : '#FFFFFF'); };
+    var radio = function (on) { return 'width: 20px; height: 20px; flex-shrink: 0; border-radius: 10px; box-sizing: border-box; ' + (on ? 'border: 6px solid #13894A; background: #FFFFFF;' : 'border: 2px solid #8A8E96;'); };
+    var rowSel = function (on) { return 'display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 16px; border: 0; border-bottom: 1px solid #E7F1E6; text-align: left; color: #15171C; background: ' + (on ? '#E6F7EA' : '#FFFFFF'); };
     var BIO = [['finger', 'Empreinte digitale', 'Toucher le capteur du téléphone'], ['face', 'Reconnaissance faciale', 'Regarder la caméra avant'], ['none', 'Désactivée', 'Code PIN ou code SMS uniquement']];
     var bioPick = s.bioPick || (bioOn ? bioType : 'none');
     var bioOptions = BIO.map(function (b) { return { title: b[1], sub: b[2], style: rowSel(b[0] === bioPick), radio: radio(b[0] === bioPick), pick: function () { set({ bioPick: b[0] }); } }; });
@@ -866,11 +866,11 @@ class Component extends DCLogic {
       }, function (e) { self.setState({ busy: false, screen: 'done', last: { title: 'Demande impossible', text: e.message, fail: true } }); self.refresh(); });
     };
     var cxView = function (h) {
-        var docBtn = 'flex-shrink: 0; min-height: 36px; padding: 0 14px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #FFFFFF; color: #0F6B4F; border: 1px solid #0F6B4F;';
+        var docBtn = 'flex-shrink: 0; min-height: 36px; padding: 0 14px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #FFFFFF; color: #13894A; border: 1px solid #13894A;';
         if (!h.cx && h.quitUrl) return { t: h.t, d: h.d, a: h.a, style: 'font-weight: 700; font-size: 14px; color: #15171C', can: true, cxNote: 'Quittance électronique ' + h.quit, cxLabel: 'Voir la quittance', cxStyle: docBtn, act: function () { window.open(h.quitUrl, '_blank', 'noopener'); } };
         if (!h.cx && h.insId) return { t: h.t, d: h.d, a: h.a, style: 'font-weight: 700; font-size: 14px; color: #15171C', can: true, cxNote: 'Attestation d’assurance', cxLabel: 'Afficher', cxStyle: docBtn, act: function () { set({ screen: 'insCard', insShow: h.insId }); } };
         var armed = s.cxArm === h.id, mins = Math.max(1, Math.ceil(h.left / 60));
-        return { t: h.t, d: h.d, a: h.a, style: 'font-weight: 700; font-size: 14px; color: ' + (h.pos ? '#0F6B4F' : '#15171C'),
+        return { t: h.t, d: h.d, a: h.a, style: 'font-weight: 700; font-size: 14px; color: ' + (h.pos ? '#13894A' : '#15171C'),
           can: !!h.cx,
           cxNote: h.cx === 'cancel' ? 'Erreur ? Annulation possible encore ' + (h.left < 60 ? h.left + ' s' : mins + ' mn') : 'Suspension possible encore ' + mins + ' mn (vérifiée par un agent)',
           cxLabel: armed ? (h.cx === 'cancel' ? 'Confirmer l’annulation' : 'Confirmer la suspension') : (h.cx === 'cancel' ? 'Annuler l’envoi' : 'Suspendre l’envoi'),
@@ -882,7 +882,7 @@ class Component extends DCLogic {
     if (lastTx) hist.forEach(function (h) { if (h.id === lastTx && (h.cx || h.quitUrl || h.insId)) doneH = cxView(h); });
     var claimOps = hist.slice(0, 5).map(function (h, i) { return { on: i === s.claimOp, t: h.t, d: h.d, a: h.a, style: rowSel(i === s.claimOp), radio: radio(i === s.claimOp), pick: function () { set({ claimOp: i }); } }; });
     var MOTIFS = ['Argent débité, non reçu', 'Montant incorrect', 'Opération non reconnue', 'Double débit', 'Autre'];
-    var claimMotifs = MOTIFS.map(function (m) { var on = m === s.claimMotif; return { on: on, label: m, pick: function () { set({ claimMotif: m }); }, style: 'min-height: 38px; padding: 0 12px; border-radius: 999px; font-size: 13px; font-weight: 600; ' + (on ? 'background: #15171C; color: #FFFFFF; border: 1px solid #15171C;' : 'background: #FFFFFF; color: #15171C; border: 1px solid #D6D2C7;') }; });
+    var claimMotifs = MOTIFS.map(function (m) { var on = m === s.claimMotif; return { on: on, label: m, pick: function () { set({ claimMotif: m }); }, style: 'min-height: 38px; padding: 0 12px; border-radius: 999px; font-size: 13px; font-weight: 600; ' + (on ? 'background: #15171C; color: #FFFFFF; border: 1px solid #15171C;' : 'background: #FFFFFF; color: #15171C; border: 1px solid #CFE2D0;') }; });
     var claimOk = s.claimOp >= 0 && !!s.claimMotif && !!hist[s.claimOp] && !s.busy;
     var submitClaim = function () {
       if (!claimOk) return;
@@ -903,11 +903,11 @@ class Component extends DCLogic {
     var chatMsgs = welcome.concat(srv.msgs || []).map(function (m) {
       return { text: m.text, who: m.me ? 'Vous' : 'Conseiller e-Wari',
         wrap: 'display: flex; flex-direction: column; gap: 2px; align-items: ' + (m.me ? 'flex-end' : 'flex-start'),
-        bubble: 'max-width: 80%; padding: 10px 12px; border-radius: 14px; font-size: 14px; line-height: 1.4; ' + (m.me ? 'background: #0F6B4F; color: #FFFFFF; border-bottom-right-radius: 4px;' : 'background: #F4F2EC; color: #15171C; border-bottom-left-radius: 4px;') };
+        bubble: 'max-width: 80%; padding: 10px 12px; border-radius: 14px; font-size: 14px; line-height: 1.4; ' + (m.me ? 'background: #13894A; color: #FFFFFF; border-bottom-right-radius: 4px;' : 'background: #F3FAF2; color: #15171C; border-bottom-left-radius: 4px;') };
     });
 
     /* Validation par code SMS */
-    var row = function (k, v, strong) { return { k: k, v: v, style: 'display: flex; justify-content: space-between; gap: 12px' + (strong ? '; padding-top: 10px; border-top: 1px solid #ECE8DE' : '') }; };
+    var row = function (k, v, strong) { return { k: k, v: v, style: 'display: flex; justify-content: space-between; gap: 12px' + (strong ? '; padding-top: 10px; border-top: 1px solid #E7F1E6' : '') }; };
     var payLines = (s.payLinesSrv || []).map(function (l) { return row(l[0], String(l[1]).replace(/ /g, ' '), l[2]); });
     var backOf = { trade: 'trade', swap: 'trade', deposit: 'deposit', send: 'send', qr: 'qrpay', bill: 'bill', invest: 'invest', convert: 'invest', pispi: 'pispi', insurance: 'ins', etat: 'etat' };
     var verifyPay = function () {
@@ -989,10 +989,10 @@ class Component extends DCLogic {
       return {
         label: 'PARI ' + g.label, kind: g.kind, statusTxt: g.statusTxt, forming: g.status === 'forming', note: g.note || '',
         hasRound: !!r && g.status !== 'done', taker: r ? r.taker : '',
-        takerStyle: 'font-size: 14px; font-weight: 700; color: ' + (r && r.iAmTaker ? '#0A4F3A' : '#15171C'),
+        takerStyle: 'font-size: 14px; font-weight: 700; color: ' + (r && r.iAmTaker ? '#0B5C31' : '#15171C'),
         roundTxt: r ? 'Tour ' + r.n + ' / ' + g.size + ' · versement ' + r.payTxt : '',
         roundPay: r ? 'Paiements des membres : ' + r.paidCount + ' / ' + r.expectedNow + ' attendus à ce jour (' + r.expectedTotal + ' sur le tour)' : '',
-        bar: 'height: 6px; background: #0F6B4F; width: ' + pct + '%',
+        bar: 'height: 6px; background: #13894A; width: ' + pct + '%',
         cyclePay: g.cycle ? 'Cycle : ' + g.cycle.paidCount + ' / ' + g.cycle.expectedNow + ' paiements à ce jour · ' + g.cycle.roundsPaid + ' / ' + g.size + ' tours versés' : '',
         hasMe: !!me, meTxt: me ? 'Mes cotisations : ' + me.paid + ' / ' + me.total + ' payées' : '',
         hasLate: !!(me && me.pending), lateTxt: me && me.pending ? me.pending + ' cotisation' + (me.pending > 1 ? 's' : '') + ' non prélevée' + (me.pending > 1 ? 's' : '') + ' : alimentez votre compte, nouvel essai automatique chaque jour à 20 h.' : '',
@@ -1005,7 +1005,7 @@ class Component extends DCLogic {
       };
     });
     var pariCats = (PR ? PR.cats : []).map(function (c) {
-      var col = c.member ? '#DCEFE6;color:#0A4F3A' : c.eligible ? '#E1ECF8;color:#0E2F55' : '#ECE8DE;color:#5A5E66';
+      var col = c.member ? '#D3F2DC;color:#0B5C31' : c.eligible ? '#E1ECF8;color:#0E2F55' : '#E7F1E6;color:#5A5E66';
       return {
         label: c.label, kind: c.kind, cycleTxt: c.cycleTxt, payTxt: c.payTxt,
         potTxt: 'À votre tour : ' + fx(c.potNet) + ' (' + fx(c.potGross) + ' moins ' + String(c.commission).replace('.', ',') + ' % de commission)',
@@ -1096,11 +1096,56 @@ class Component extends DCLogic {
     };
     var otpHintTxt = s.otpHint || 'Code envoyé par SMS';
 
+    /* ---- Accueil (nouveau design) : recherche, actions rapides, transactions récentes ---- */
+    var hNorm = function (x) { return String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); };
+    var hq = hNorm(String(s.homeQ || '').trim());
+    var QA = [
+      { label: 'Envoyer de l’argent', icon: 'M7 17L17 7M9 7h8v8', act: go('send') },
+      { label: 'Déposer', icon: 'M12 5v14M5 12h14', act: go('deposit', { dir: 'in', method: OPS[0] }) },
+      { label: 'Retirer', icon: 'M7 10l5 5 5-5M12 15V3M5 21h14', act: go('deposit', { dir: 'out', method: OPS[0] }) },
+      { label: 'Payer une facture', icon: 'M6 3h12v18l-3-2-3 2-3-2-3 2z', act: go('pay') },
+      { label: 'Scanner et payer', icon: 'M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3', act: go('scan', { scanTab: 'scan', camErr: '' }) },
+      { label: 'Mon QR code', icon: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2z', act: go('scan', { scanTab: 'myqr' }) },
+      { label: 'Relevé et historique', icon: 'M7 3h7l5 5v13H7zM10 13h6M10 17h6', act: function () { set({ screen: 'history' }); self.refresh(); } },
+      { label: 'PARI (tontine)', icon: 'M12 6v3M17.3 14l-2.6-1M6.7 14l2.6-1', act: goPari },
+      { label: 'Investir', icon: 'M3 20h18M6 16v-4M11 16V8M16 16v-6', act: function () { set({ screen: 'invest' }); self.refresh(); } },
+      { label: 'Recevoir de l’étranger', icon: 'M3 12h18M12 3a14 14 0 0 1 0 18', act: go('abroad', { rmInfo: '' }) },
+      { label: 'Parler à un conseiller', icon: 'M21 12a8 8 0 0 1-12 7l-5 1 1-4a8 8 0 1 1 16-4z', act: go('chat', { contactMsg: '' }) },
+      { label: 'Sécurité et code PIN', icon: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4', act: go('secu') }
+    ].concat(billCats.map(function (b) { return { label: 'Payer › ' + b.name + ' (' + b.sub + ')', icon: b.icon, act: b.pick }; }));
+    var quickHits = hq ? QA.filter(function (q) { return hNorm(q.label).indexOf(hq) >= 0; }).slice(0, 8) : [];
+    var homeTx = hist.filter(function (h) { return !hq || hNorm(h.t + ' ' + h.d + ' ' + h.a).indexOf(hq) >= 0; }).slice(0, hq ? 15 : 6).map(function (h) {
+      return { t: h.t, d: h.d, a: h.a,
+        amt: 'font-weight: 700; font-size: 15px; white-space: nowrap; color: ' + (h.pos ? '#13894A' : '#0E1F15'),
+        ic: 'flex-shrink: 0; width: 40px; height: 40px; border-radius: 20px; display: flex; align-items: center; justify-content: center; ' + (h.pos ? 'background: #D3F2DC; color: #13894A' : 'background: #FCE4EC; color: #B0285E'),
+        path: h.pos ? 'M17 7L7 17M15 17H7V9' : 'M7 17L17 7M9 7h8v8' };
+    });
+    /* ---- Retrait chez un agent payeur : demande à confirmer avec le code PIN (service gov) ---- */
+    if (scr === 'home' && s.token && (!self._rtAt || Date.now() - self._rtAt > 8000)) {
+      self._rtAt = Date.now();
+      call('/gov/retrait', null, s.token).then(function (d) { var ids = (d || []).map(function (x) { return x.id; }).join(','); if (ids !== (self._rtIds || '')) { self._rtIds = ids; self.setState({ retraits: d || [] }); } }, function () {});
+      if (!self._rtTimer) self._rtTimer = setInterval(function () { if ((self.state || {}).screen === 'home') self.setState({ rtTick: Date.now() }); }, 9000);
+    }
+    var RTL = (s.retraits || []).filter(function (r) { return new Date(r.expiresAt).getTime() > Date.now(); });
+    var rtPinOk = /^\d{4}$/.test(s.rtPin || '');
+    var rtDecide = function (r, decision) { return function () {
+      if (s.busy) return;
+      if (decision === 'approve' && !rtPinOk) { set({ rtMsg: 'Saisissez votre code PIN pour confirmer le retrait.' }); return; }
+      set({ busy: true, rtMsg: '' });
+      call('/gov/retrait/' + encodeURIComponent(r.id), { decision: decision, pin: s.rtPin }, s.token).then(function (x) {
+        self._rtIds = ''; self.setState({ busy: false, rtPin: '', rtMsg: x.message, retraits: (s.retraits || []).filter(function (y) { return y.id !== r.id; }) }); self.refresh();
+      }, function (e) { self.setState({ busy: false, rtPin: '', rtMsg: e.message }); });
+    }; };
+    var rtRows = RTL.map(function (r) { return { title: 'Retrait chez ' + r.agent + (r.city ? ' (' + r.city + ')' : ''), text: 'L’agent vous remet ' + fx(r.amount) + ' en espèces. Débité : ' + fx(r.total) + ' (frais ' + fx(r.fee) + ').', ok: rtDecide(r, 'approve'), no: rtDecide(r, 'refuse') }; });
     return {
       isHome: scr === 'home', isTrade: scr === 'trade' && cryptoOn, isWallet: scr === 'wallet' && cryptoOn, isCountry: scr === 'country', isDeposit: scr === 'deposit',
       isSend: scr === 'send', isHistory: scr === 'history', isDone: scr === 'done', isLoading: scr === 'loading',
       showNav: scr === 'home' || scr === 'pay' || scr === 'invest' || (scr === 'trade' && cryptoOn) || (scr === 'wallet' && cryptoOn) || scr === 'history',
-      goHome: go('home'), goTrade: go('trade'), goHistory: function () { set({ screen: 'history' }); self.refresh(); },
+      rtRows: rtRows, hasRt: rtRows.length > 0, rtPin: s.rtPin || '', onRtPin: function (e) { set({ rtPin: String(e.target.value || '').replace(/\D/g, '').slice(0, 4) }); }, rtHasMsg: !!s.rtMsg, rtMsg: s.rtMsg || '', rtMsgOut: !!s.rtMsg && !rtRows.length,
+      goHome: go('home'), goHelp: go('chat', { contactMsg: '' }),
+      homeQ: s.homeQ || '', onHomeQ: function (e) { set({ homeQ: e.target.value }); }, quickHits: quickHits, hasQuickHits: quickHits.length > 0,
+      homeTx: homeTx, noHomeTx: !homeTx.length, homeTxTitle: hq ? 'Résultats de la recherche' : 'Transactions récentes', noHomeTxText: hq ? 'Aucune transaction ne correspond à votre recherche.' : 'Aucune opération pour l’instant : faites un dépôt pour commencer.',
+      goTrade: go('trade'), goHistory: function () { set({ screen: 'history' }); self.refresh(); },
       goDeposit: go('deposit', { dir: 'in', method: OPS[0] }),
       goWithdraw: go('deposit', { dir: 'out', method: OPS[0] }),
       goSend: go('send'),
@@ -1112,7 +1157,7 @@ class Component extends DCLogic {
       ddCountry: dd('country', COUNTRIES.map(function (c) {
         return { code: c.code, name: c.name, on: c.code === ctry.code,
           sub: (c.zone === 'CEMAC' ? 'XAF · zone CEMAC · transferts' : c.zone === 'GN' ? 'GNF · Guinée · paiements locaux' : 'XOF · zone UEMOA · crypto') + ' · ' + c.dial,
-          style: 'display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-bottom: 1px solid #ECE8DE; text-align: left; color: #15171C; background: ' + (c.code === ctry.code ? '#EEF6F2' : '#FFFFFF'),
+          style: 'display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-bottom: 1px solid #E7F1E6; text-align: left; color: #15171C; background: ' + (c.code === ctry.code ? '#E6F7EA' : '#FFFFFF'),
           pick: function () { set({ country: c.code, screen: (s.token && srv.country === c.code) ? 'home' : 'phone', regPhone: '', otp: '', otpErr: '', method: c.ops[0], payout: 'wallet', xAsset: c.zone === 'CEMAC' ? 'XAF' : 'XOF', amount: '', dAmount: '', xAmount: '' }); } };
       }), function (r) { return r.name + ' (' + r.code + ')'; }, function (r) { return r.sub; }, 'Autres pays'),
       ddPayout: dd('payout', [{ key: 'wallet', label: 'Mon solde F CFA' }].concat(OPS.map(function (o) { return { key: o, label: o }; })).map(function (p) {
@@ -1156,8 +1201,8 @@ class Component extends DCLogic {
       kycDocs: KDOCS.map(function (d) {
         var on = d.id === kd.id;
         return { name: d.name, sub: d.sub, pick: function () { set({ kycDoc: d.id }); },
-          radio: 'width: 20px; height: 20px; flex-shrink: 0; border-radius: 10px; box-sizing: border-box; ' + (on ? 'border: 6px solid #0F6B4F; background: #FFFFFF;' : 'border: 2px solid #8A8E96;'),
-          style: 'display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 16px; border: 0; border-bottom: 1px solid #ECE8DE; text-align: left; color: #15171C; background: ' + (on ? '#EEF6F2' : '#FFFFFF') };
+          radio: 'width: 20px; height: 20px; flex-shrink: 0; border-radius: 10px; box-sizing: border-box; ' + (on ? 'border: 6px solid #13894A; background: #FFFFFF;' : 'border: 2px solid #8A8E96;'),
+          style: 'display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 16px; border: 0; border-bottom: 1px solid #E7F1E6; text-align: left; color: #15171C; background: ' + (on ? '#E6F7EA' : '#FFFFFF') };
       }),
       kycDocName: kd.name,
       kycToPhoto: function () { if (kycBirthOk) set({ screen: 'kycPhoto' }); },
@@ -1207,7 +1252,7 @@ class Component extends DCLogic {
       scenarios: [0.5, 1, 2, 5].map(function (k) {
         var on = (s.scen || 2) === k;
         return { label: '×' + String(k).replace('.', ','), pick: function () { set({ scen: k }); },
-          style: 'min-height: 40px; border-radius: 10px; font-weight: 600; font-size: 14px; ' + (on ? 'background: #15171C; color: #FFFFFF; border: 1px solid #15171C;' : 'background: #FFFFFF; color: #15171C; border: 1px solid #D6D2C7;') };
+          style: 'min-height: 40px; border-radius: 10px; font-weight: 600; font-size: 14px; ' + (on ? 'background: #15171C; color: #FFFFFF; border: 1px solid #15171C;' : 'background: #FFFFFF; color: #15171C; border: 1px solid #CFE2D0;') };
       }),
       scenarioText: big(postVal * (s.scen || 2)) + ' → vos ' + invParts + ' parts vaudraient',
       scenarioValue: fx(invAmt * (s.scen || 2)),
@@ -1218,12 +1263,12 @@ class Component extends DCLogic {
       setInvPartner: function () { set({ invProfile: 'partner' }); },
       invCode: s.invCode, onInvCode: function (e) { set({ invCode: e.target.value }); },
       invCodeHint: codeOk ? 'Code au bon format · vérifié à la validation' : 'Format : P- suivi de 5 chiffres (votre code partenaire e-Wari)',
-      invCodeHintStyle: 'font-size: 12px; ' + (codeOk ? 'color: #0F6B4F; font-weight: 600' : 'color: #5A5E66'),
+      invCodeHintStyle: 'font-size: 12px; ' + (codeOk ? 'color: #13894A; font-weight: 600' : 'color: #5A5E66'),
       invParts: invParts, invAmount: fx(invAmt),
       partsMinus: setParts(invParts - 1), partsPlus: setParts(invParts + 1),
       partsQuick: [1, 5, 10, 50].map(function (n) {
         return { label: n + (n > 1 ? ' parts' : ' part'), pick: setParts(n),
-          style: 'padding: 6px 12px; min-height: 36px; border-radius: 999px; font-size: 13px; ' + (n === invParts ? 'background: #15171C; color: #FFFFFF; border: 1px solid #15171C;' : 'background: #FFFFFF; color: #15171C; border: 1px solid #D6D2C7;') };
+          style: 'padding: 6px 12px; min-height: 36px; border-radius: 999px; font-size: 13px; ' + (n === invParts ? 'background: #15171C; color: #FFFFFF; border: 1px solid #15171C;' : 'background: #FFFFFF; color: #15171C; border: 1px solid #CFE2D0;') };
       }),
       invRiskOk: !!s.invRisk, toggleRisk: function (e) { set({ invRisk: !!e.target.checked }); },
       invErr: invErr, hasInvErr: !!invErr,
@@ -1251,7 +1296,7 @@ class Component extends DCLogic {
       rentAccept: !!s.rentAccept, rentToggle: function (e) { set({ rentAccept: !!e.target.checked }); },
       rentPin: s.rentPin || '', onRentPin: function (e) { set({ rentPin: String(e.target.value || '').replace(/\D/g, '').slice(0, 4) }); },
       rentActivate: rentActivate, rentStop: rentStop, rentBlocked: !(s.rentAccept && rentPinOk) || !!s.busy,
-      rentBtn: 'min-height:48px;border:0;border-radius:12px;font-size:15px;font-weight:700;color:#FFFFFF;background:' + (s.rentAccept && rentPinOk && !s.busy ? '#0F6B4F' : '#9CA3AF'),
+      rentBtn: 'min-height:48px;border:0;border-radius:12px;font-size:15px;font-weight:700;color:#FFFFFF;background:' + (s.rentAccept && rentPinOk && !s.busy ? '#13894A' : '#9CA3AF'),
       rentHasMsg: !!s.rentMsg, rentMsg: s.rentMsg || '',
       billFound: billFound, billFoundTitle: bc.lookSoft && !(looked && lk.ok) ? 'Hôtel partenaire' : bc.foundTitle, billFoundText: foundText,
       billFixedShow: billFixed && billFound && fixedAmt > 0, billFreeShow: partnerOk && !(billFixed && fixedAmt > 0) && (!bc.lookup || billFound),
@@ -1342,7 +1387,7 @@ class Component extends DCLogic {
       mmDemo: !!mm && !!mm.demo, mmTitle: mm ? mm.title : '', mmOp: mm ? mm.op : '', mmUssd: mm ? mm.ussd : '', mmAmt: mm ? fx(mm.amount) : '', mmPhone: mm ? mm.phone : '', mmRef: mm ? mm.id : '',
       mmSteps: (mm ? mm.steps : []).map(function (t, i) { return { n: String(i + 1), t: t }; }),
       mmLeft: Math.floor(mmLeftS / 60) + ' min ' + ('0' + (mmLeftS % 60)).slice(-2) + ' s', mmLow: mmLeftS < 60,
-      mmLeftStyle: 'font-weight:700;color:' + (mmLeftS < 60 ? '#A12A1E' : '#0A4F3A'),
+      mmLeftStyle: 'font-weight:700;color:' + (mmLeftS < 60 ? '#A12A1E' : '#0B5C31'),
       mmSms: s.mmSms || '', hasMmSms: !!s.mmSms, mmErr: s.mmErr || '', hasMmErr: !!s.mmErr,
       mmCode: s.mmCode || '', onMmCode: function (e) { set({ mmCode: e.target.value.replace(/\D/g, '').slice(0, 8), mmErr: '' }); },
       mmPin: s.mmPin || '', onMmPin: function (e) { set({ mmPin: e.target.value.replace(/\D/g, '').slice(0, 4), mmErr: '' }); },
@@ -1370,7 +1415,7 @@ class Component extends DCLogic {
       hasInsErr: !!insErr, insErr: insErr, insCta: cta(insOk), confirmIns: confirmIns,
       icPlate: insCard ? insCard.plate : '', icVehicle: insCard ? insCard.vehicle : '', icHolder: insCard ? insCard.holder : '', icProduct: insCard ? insCard.productLabel : '',
       icFrom: insCard ? frD(insCard.start) : '', icTo: insCard ? frD(insCard.end) : '', icId: insCard ? insCard.id : '', icStatus: insCard ? insCard.statusTxt.toUpperCase() : '',
-      icStatusStyle: 'align-self: flex-start; display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; font-size: 20px; font-weight: 800; letter-spacing: 0.04em; background: #FFFFFF; color: ' + (insValid ? '#0A4F3A' : '#A12A1E'),
+      icStatusStyle: 'align-self: flex-start; display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; font-size: 20px; font-weight: 800; letter-spacing: 0.04em; background: #FFFFFF; color: ' + (insValid ? '#0B5C31' : '#A12A1E'),
       icBg: 'display: flex; flex-direction: column; gap: 14px; padding: 22px 20px; border-radius: 24px; color: #FFFFFF; background: ' + insCardBg,
       icClock: insClock, icBar: 'height: 4px; border-radius: 2px; background: #FFFFFF; opacity: 0.85; width: ' + Math.round(((sec % 10) + 1) * 10) + '%',
       icQrPath: insQr.path, icQrBox: '0 0 ' + insQr.n + ' ' + insQr.n, icCode: insCard ? insCard.certCode : '', icUrl: insCard ? insCard.verifyUrl : '',
@@ -1387,7 +1432,7 @@ class Component extends DCLogic {
       pariGroups: pariGroups, hasPariGroups: pariGroups.length > 0, pariCats: pariCats,
       pcLabel: prSel ? prSel.label : '', pcKind: prSel ? prSel.kind : '', pcCycle: prSel ? prSel.cycleTxt : '', pcPer: prSel ? prSel.perTxt : '', pcPay: prSel ? prSel.payTxt : '',
       pcPot: prSel ? 'À votre tour, vous recevez ' + fx(prSel.potNet) + ' (' + fx(prSel.potGross) + ' collectés, commission e-Wari ' + String(prSel.commission).replace('.', ',') + ' %).' : '',
-      pcChecks: (prSel ? prSel.checks : []).map(function (k) { return { label: k.label, have: k.have, need: k.need, ico: k.ok ? '✓' : '✗', icoStyle: 'flex-shrink: 0; width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; ' + (k.ok ? 'background: #DCEFE6; color: #0A4F3A;' : 'background: #F6DEDA; color: #A12A1E;') }; }),
+      pcChecks: (prSel ? prSel.checks : []).map(function (k) { return { label: k.label, have: k.have, need: k.need, ico: k.ok ? '✓' : '✗', icoStyle: 'flex-shrink: 0; width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; ' + (k.ok ? 'background: #D3F2DC; color: #0B5C31;' : 'background: #F6DEDA; color: #A12A1E;') }; }),
       pcMember: !!prSel && !!prSel.member, pcNotQ: pcNotQ,
       pcNotQTxt: pcNoKyc ? 'Votre compte doit d’abord être identifié et validé : envoyez votre pièce d’identité depuis l’accueil.' : 'Vous n’êtes pas encore qualifié pour ce PARI. Merci d’augmenter vos opérations.',
       pcCanJoin: !!prSel && prSel.eligible && !prSel.member,
@@ -1443,7 +1488,7 @@ class Component extends DCLogic {
       countryCode: ctry.code, countryName: ctry.name, cur: CUR, dial: ctry.dial, phPlaceholder: ctry.ph,
       cryptoOn: cryptoOn, cryptoOff: !cryptoOn,
       actionGrid: 'display: grid; grid-template-columns: repeat(' + (cryptoOn ? 4 : 3) + ', minmax(0, 1fr)); gap: 8px',
-      navGrid: 'flex-shrink: 0; display: grid; grid-template-columns: repeat(' + (cryptoOn ? 5 : 4) + ', minmax(0, 1fr)); min-height: 72px; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid #E0DCD1; background: #FFFFFF',
+      navGrid: 'flex-shrink: 0; display: grid; grid-template-columns: repeat(' + (cryptoOn ? 5 : 4) + ', minmax(0, 1fr)); min-height: 72px; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid #DCEBDC; background: #FFFFFF',
       zones: [
         { title: 'Zone UEMOA · XOF · crypto disponible', z: 'UEMOA' },
         { title: 'Zone CEMAC · XAF · transferts uniquement', z: 'CEMAC' },
@@ -1455,7 +1500,7 @@ class Component extends DCLogic {
             return {
               code: c.code, name: c.name, on: c.code === ctry.code,
               sub: (c.zone === 'CEMAC' ? 'XAF' : c.zone === 'GN' ? 'GNF' : 'XOF') + ' · ' + c.dial + ' · ' + c.ops.join(', '),
-              style: 'display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-bottom: 1px solid #ECE8DE; text-align: left; color: #15171C; background: ' + (c.code === ctry.code ? '#EEF6F2' : '#FFFFFF'),
+              style: 'display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-bottom: 1px solid #E7F1E6; text-align: left; color: #15171C; background: ' + (c.code === ctry.code ? '#E6F7EA' : '#FFFFFF'),
               pick: function () { set({ country: c.code, screen: (s.token && srv.country === c.code) ? 'home' : 'phone', regPhone: '', otp: '', otpErr: '' }); }
             };
           })
@@ -1469,7 +1514,7 @@ class Component extends DCLogic {
       setSell: function () { set({ mode: 'sell', amount: '', sellAll: false }); },
       setConv: function () { set({ mode: 'convert', cAmount: '' }); },
       buyTab: tab(isBuy), sellTab: tab(tmode === 'sell'), convTab: tab(isConv),
-      tabs3: 'display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; background: #E6E2D8; border-radius: 14px',
+      tabs3: 'display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; background: #E2F0E1; border-radius: 14px',
       notConv: !isConv, isConv: isConv,
       cxSim: CX.mode === 'sim',
       cxSimText: 'Mode test : cours réels ' + (CX.src || 'Binance') + ', exécution simulée (aucune vraie crypto).',
@@ -1533,7 +1578,7 @@ class Component extends DCLogic {
       wMinLine: 'Dépôt minimum ' + fc(wNet.min, wA) + ' · crédité après confirmation du réseau (' + wNet.eta + ').',
       wSimAddr: !!(wAd && wAd.sim),
       wSimDep: simDeposit, wSimDepLabel: 'Simuler la réception de ' + fc(SIMDEP[wA], wA),
-      wHist: hist.filter(function (h) { return h.asset === wA; }).slice(0, 8).map(function (h) { return { t: h.t, d: h.d, a: h.a, style: 'font-weight: 700; font-size: 14px; color: ' + (h.pos ? '#0F6B4F' : '#15171C') }; }),
+      wHist: hist.filter(function (h) { return h.asset === wA; }).slice(0, 8).map(function (h) { return { t: h.t, d: h.d, a: h.a, style: 'font-weight: 700; font-size: 14px; color: ' + (h.pos ? '#13894A' : '#15171C') }; }),
       wNoHist: !hist.some(function (h) { return h.asset === wA; }),
 
       dTitle: isIn ? 'Déposer des F CFA' : 'Retirer des F CFA',
@@ -1564,7 +1609,7 @@ class Component extends DCLogic {
       xShowNet: isAddr && xNets.length > 0,
       xNetChips: xNets.map(function (n) { return { label: n.name, pick: function () { set({ xNet: n.id }); }, style: chip(xNet && n.id === xNet.id) }; }),
       xNetHint: xNet ? 'Vérifiez que l’adresse est bien sur ' + xNet.name + ' · délai habituel ' + xNet.eta + ' · minimum ' + fc(xNet.min, xa) : '',
-      recHintStyle: 'font-size: 12px; ' + (recOk ? 'color: #0F6B4F; font-weight: 600' : 'color: #5A5E66'),
+      recHintStyle: 'font-size: 12px; ' + (recOk ? 'color: #13894A; font-weight: 600' : 'color: #5A5E66'),
       recipient: s.recipient, onRecipient: function (e) { set({ recipient: e.target.value }); },
       xAmtLabel: 'Montant à envoyer (' + (xa === CUR ? 'F CFA' : xa) + ')',
       xAmount: s.xAmount, onXAmount: function (e) { set({ xAmount: e.target.value }); },
