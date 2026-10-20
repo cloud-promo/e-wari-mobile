@@ -21,6 +21,7 @@
     "@capacitor/status-bar": "8.0.4",
     "@capgo/inappbrowser": "8.6.14",
     "@fontsource/ibm-plex-sans": "5.3.0",
+    "@fontsource/plus-jakarta-sans": "5.2.5",
     "@fontsource/space-grotesk": "5.3.0",
     "jsqr": "1.4.0",
     "morphdom": "2.7.4",

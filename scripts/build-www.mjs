@@ -18,7 +18,7 @@ fs.mkdirSync(O('fonts'), { recursive: true });
 fs.copyFileSync(NM('morphdom/dist/morphdom-umd.min.js'), O('vendor/morphdom.js'));
 fs.copyFileSync(NM('qrcode-generator/qrcode.js'), O('vendor/qrcode.js'));
 fs.copyFileSync(NM('jsqr/dist/jsQR.js'), O('vendor/jsQR.js'));
-const FONTS = [['space-grotesk', 'Space Grotesk', [500, 700]], ['ibm-plex-sans', 'IBM Plex Sans', [400, 500, 600]]];
+const FONTS = [['plus-jakarta-sans', 'Plus Jakarta Sans', [600, 700, 800]], ['space-grotesk', 'Space Grotesk', [500, 700]], ['ibm-plex-sans', 'IBM Plex Sans', [400, 500, 600]]];
 let css = '';
 for (const [pkg, , ws] of FONTS) for (const w of ws) {
   // Blocs @font-face de fontsource (avec unicode-range), limités aux alphabets latin et latin étendu
@@ -31,7 +31,7 @@ for (const [pkg, , ws] of FONTS) for (const w of ws) {
     css += blk.slice(blk.indexOf('@font-face')).replace(/src:[^;]+;/, `src: url(./${f}) format('woff2');`);
   }
 }
-if ((css.match(/@font-face/g) || []).length !== 10) throw new Error('polices : 10 blocs attendus');
+if ((css.match(/@font-face/g) || []).length !== 16) throw new Error('polices : 16 blocs attendus');
 fs.writeFileSync(O('fonts/fonts.css'), css);
 
 fs.copyFileSync(W('logo.svg'), O('logo.svg'));
@@ -44,7 +44,7 @@ const rep = (a, b) => { if (!h.includes(a)) throw new Error('Motif absent de pag
 const CSP = `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: ${ORIGIN}; media-src 'self' blob: mediastream:; connect-src 'self' ${ORIGIN}; frame-src 'none'; object-src 'none'; base-uri 'self'`;
 rep('<link rel="icon" href="/logo.svg" type="image/svg+xml"><link rel="icon" href="/icon-192.png" sizes="192x192">', `<meta http-equiv="Content-Security-Policy" content="${CSP}">`);
 rep('<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png">', '');
-rep('<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">',
+rep('<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">',
   '<link rel="stylesheet" href="fonts/fonts.css"><script src="native.js"></script>');
 rep('src="/logo.svg"', 'src="logo.svg"');
 rep('<script src="https://cdn.jsdelivr.net/npm/morphdom@2.7.4/dist/morphdom-umd.min.js"></script>', '<script src="vendor/morphdom.js"></script>');
@@ -55,7 +55,7 @@ const a = h.indexOf("<script>/* Moteur d'affichage"), b = h.indexOf('</script>',
 if (a < 0) throw new Error('moteur d’affichage introuvable dans page.html');
 h = h.slice(0, a) + '<script src="runtime.js"></script>' + h.slice(b + 9);
 // Zones sûres (encoche, barre de navigation) : uniquement dans l'app native
-const SAFE = `<style>html.natif body{box-sizing:border-box;padding-top:var(--safe-area-inset-top,env(safe-area-inset-top,0px));padding-bottom:var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px));background:#F4F2EC}
+const SAFE = `<style>html.natif body{box-sizing:border-box;padding-top:var(--safe-area-inset-top,env(safe-area-inset-top,0px));padding-bottom:var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px));background:#F3FAF2}
 html.natif #app>div{height:calc(100dvh - var(--safe-area-inset-top,env(safe-area-inset-top,0px)) - var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))!important}
 html.natif,html.natif body{overscroll-behavior:none;-webkit-user-select:none;user-select:none}html.natif input,html.natif textarea{-webkit-user-select:text;user-select:text}</style></head>`;
 rep('</head>', SAFE);
